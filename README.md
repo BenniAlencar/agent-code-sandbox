@@ -2,6 +2,7 @@
 
 [![CI Test Suite](https://img.shields.io/badge/CI-100%25%20Passing-brightgreen.svg)](https://github.com/BenniAlencar/agent-code-sandbox)
 [![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://pypi.org/project/agent-code-sandbox/)
+[![Glama MCP Server](https://glama.ai/mcp/servers/tjnmauvr4z/badge)](https://glama.ai/mcp/servers/tjnmauvr4z)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-JSON--RPC%202.0-8a2be2.svg)](https://modelcontextprotocol.io/)
 [![Startup Latency](https://img.shields.io/badge/Cold%20Start-%3C5ms-success.svg)](#micro-benchmarks)
