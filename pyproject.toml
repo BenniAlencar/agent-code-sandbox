@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-code-sandbox"
+version = "1.0.0"
+description = "Micro-Second Zero-Dependency Code Sandbox & Execution Shield for AI Agents & MCP"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    { name = "Benni Alencar", email = "bennialencar@gmail.com" }
+]
+keywords = [
+    "code-sandbox",
+    "ai-agents",
+    "mcp",
+    "mcp-server",
+    "code-execution",
+    "ast-security",
+    "token-shield",
+    "claude-code",
+    "cursor",
+    "sandbox",
+    "safe-eval",
+    "ephemeral-workspace"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "twine>=4.0.0",
+    "build>=1.0.0"
+]
+
+[project.scripts]
+agent-code-sandbox = "agent_code_sandbox.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/BenniAlencar/agent-code-sandbox"
+Repository = "https://github.com/BenniAlencar/agent-code-sandbox"
+Issues = "https://github.com/BenniAlencar/agent-code-sandbox/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_code_sandbox"]
