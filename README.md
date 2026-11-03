@@ -171,3 +171,6 @@ print(bad_result.stderr)       # "SecurityViolationError: Forbidden import 'os'"
 * **License:** [MIT License](LICENSE)
 * **Author:** Benni Alencar (`bennialencar@gmail.com`)
 * **Architecture:** Benni Master OS v9.4 Tier-0 Governance Standard
+
+
+* **[`agent-eval-harness`](https://github.com/BenniAlencar/agent-eval-harness)**: Deterministic zero-cloud agent evaluation & red-teaming harness with cryptographic audit receipts.
