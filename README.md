@@ -20,7 +20,7 @@
 
 <br/>
 
-<img src="assets/demo.svg" alt="agent-code-sandbox terminal demo" width="100%"/>
+<img src="assets/demo.gif" alt="agent-code-sandbox terminal demo" width="100%"/>
 
 </div>
 
