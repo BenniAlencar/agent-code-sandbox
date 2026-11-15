@@ -4,7 +4,7 @@
 
 <br/>
 
-[![Tests](https://img.shields.io/badge/Tests-12%20Passed-00C853?style=for-the-badge&logo=pytest&logoColor=white)](#-micro-benchmarks)
+[![Tests](https://img.shields.io/badge/Tests-16%20Passed-00C853?style=for-the-badge&logo=pytest&logoColor=white)](#-micro-benchmarks)
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-7000FF?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/agent-code-sandbox/)
 [![MCP](https://img.shields.io/badge/MCP-JSON--RPC%202.0-8a2be2?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![Cold Start](https://img.shields.io/badge/Cold%20Start-%3C5ms-00C853?style=for-the-badge)](#-micro-benchmarks)
@@ -34,6 +34,39 @@ When coding agents (Claude Code, Cursor, Copilot, SWE-bench) execute code dynami
 2. **Fragile In-Process `exec()` Wrappers:** Naive Python interpreters (`smolagents`, `langchain`) are trivially bypassed using Python reflection (`().__class__.__base__.__subclasses__()`, `getattr`, `eval`).
 3. **Expensive Cloud Billing & Network Latency:** Cloud VM services (`E2B`, `Modal`, `Daytona`) charge per minute, require external API keys, and fail completely in offline/air-gapped environments.
 4. **Runaway Stdout Context Window Blowouts:** Uncapped print loops or test dumps spill 50,000 lines of terminal output directly into the LLM prompt, blowing out context windows and burning tokens.
+
+---
+
+## 🏗️ Architecture
+
+```text
+  Claude Code / Cursor / Codex / Autonomous Agents
+         │
+         ├──► Python SDK  SandboxEngine.execute_python() / execute_command()
+         └──► STDIO JSON-RPC 2.0 (agent-code-sandbox mcp)
+                       │
+                       ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                     agent-code-sandbox (ACS)                        │
+  │                                                                     │
+  │  ┌───────────────────┐  ┌───────────────────┐  ┌─────────────────┐  │
+  │  │  AST Security     │  │  Ephemeral VFS    │  │  Isolated       │  │
+  │  │  Guard (<0.2ms)   │─►│  & SHA-256 Diff   │─►│  Subprocess     │  │
+  │  │ • Import Gate     │  │ • Temp Scratchpad │  │ • Hard Timeout  │  │
+  │  │ • Reflect Shield  │  │ • Atomic Snapshot │  │ • Zero Container│  │
+  │  └───────────────────┘  └───────────────────┘  └─────────────────┘  │
+  │                                                                     │
+  │  ┌───────────────────┐  ┌───────────────────┐  ┌─────────────────┐  │
+  │  │  Adaptive Token   │  │  Live Telemetry   │  │  Sandbox Doctor │  │
+  │  │  Shield           │  │  & Health Monitor │  │  & Bench Matrix │  │
+  │  │ • Head/Tail Clip  │  │ • P50/P90/P99 ms  │  │ • Runtime Probe │  │
+  │  └───────────────────┘  └───────────────────┘  └─────────────────┘  │
+  └─────────────────────────────────────────────────────────────────────┘
+         │                                         │
+         ▼                                         ▼
+   Shielded ExecutionResult                 Atomic WorkspaceDiff
+   (Stdout/Stderr + Token Savings)          (Added / Modified / Deleted)
+```
 
 ---
 
@@ -147,6 +180,42 @@ malicious_code = "import os; os.system('cat /etc/passwd')"
 bad_result = engine.execute_python(malicious_code)
 print(bad_result.is_safe)       # False
 print(bad_result.stderr)        # "SecurityViolationError: Forbidden import 'os'"
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+agent-code-sandbox/
+├── src/agent_code_sandbox/
+│   ├── __init__.py                   # Backwards-compatible public API exports
+│   ├── cli.py                        # CLI entrypoint bridge
+│   ├── core/
+│   │   ├── __init__.py               # Core sandbox primitives package
+│   │   ├── ast_guard.py              # Tier-0 static AST security scanner
+│   │   ├── engine.py                 # SandboxEngine execution & timeout orchestrator
+│   │   ├── token_shield.py           # Adaptive head/tail stdout truncation shield
+│   │   └── workspace.py              # Ephemeral temp workspace & SHA-256 diffing
+│   ├── serve/
+│   │   ├── __init__.py               # Serving & observability exports
+│   │   ├── __main__.py               # Unified CLI (run, check, mcp, doctor, matrix, health)
+│   │   ├── health_monitor.py         # Temp storage & AST guard health probe
+│   │   ├── mcp_bridge.py             # Native MCP JSON-RPC 2.0 stdio server
+│   │   └── telemetry.py              # Thread-safe P50/P90/P99 latency & token telemetry
+│   └── tools/
+│       ├── __init__.py               # Diagnostics & benchmarking exports
+│       ├── bench_matrix.py           # Multi-workload latency & token-savings matrix
+│       └── doctor.py                 # End-to-end runtime diagnostic probe
+├── examples/
+│   ├── quickstart_sandbox.py         # Minimal Python sandbox execution example
+│   └── ast_guard_and_diff.py         # AST exploit blocking + token shield + telemetry
+├── scripts/
+│   ├── benchmark_cold_start.py       # Cold-start & AST scan matrix benchmark
+│   └── gate_security_matrix.py       # Tier-0 security & health gate runner
+├── docs/
+│   └── ARCHITECTURE.md               # Three-tier package architecture reference
+└── tests/                            # Full pytest suite (16 tests)
 ```
 
 ---

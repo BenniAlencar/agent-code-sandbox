@@ -3,10 +3,18 @@ agent-code-sandbox: Micro-Second Zero-Dependency Code Sandbox & Execution Shield
 Part of Benni Master OS v9.4 ecosystem.
 """
 
-from .core import SandboxEngine, ExecutionResult
-from .ast_guard import ASTSecurityScanner, SecurityCheckResult
-from .token_shield import TokenShield, ShieldedOutput
-from .workspace import EphemeralWorkspace, WorkspaceDiff
+from .core import (
+    ASTSecurityScanner,
+    EphemeralWorkspace,
+    ExecutionResult,
+    SandboxEngine,
+    SecurityCheckResult,
+    ShieldedOutput,
+    TokenShield,
+    WorkspaceDiff,
+)
+from .serve import HealthMonitor, HealthSnapshot, SandboxTelemetry
+from .tools import BenchmarkMatrix, DoctorReport, MatrixRow, SandboxDoctor
 
 __version__ = "1.0.0"
 __author__ = "Benni Alencar"
@@ -20,5 +28,12 @@ __all__ = [
     "ShieldedOutput",
     "EphemeralWorkspace",
     "WorkspaceDiff",
+    "HealthMonitor",
+    "HealthSnapshot",
+    "SandboxTelemetry",
+    "SandboxDoctor",
+    "DoctorReport",
+    "BenchmarkMatrix",
+    "MatrixRow",
     "__version__",
 ]
